@@ -9,24 +9,67 @@ import phoneSvg from "./assets/phone.svg";
 import padlockSvg from "./assets/padlock.svg";
 import cwSvg from "./assets/cw.svg";
 import Footer from "./components/footer/Footer";
-
-const url = "https://randomuser.me/api/";
-const defaultImage = "https://randomuser.me/api/portraits/men/75.jpg";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 function App() {
+  const url = "https://randomuser.me/api/";
+  // const defaultImage = "https://randomuser.me/api/portraits/men/75.jpg";
+
+  const [data, setData] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [propert, setPropert] = useState("");
+  const [userValue, setUserValue] = useState("");
+
+  const getUser = async () => {
+    try {
+      const { data } = await axios.get(url);
+      setData(data.results[0]);
+      setLoading(true);
+      // console.log(data.results[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  if (!loading) {
+    return <h1>Loading</h1>;
+  }
+
+  const {
+    name: { title, first, last },
+    location: { street },
+    email,
+    dob: { age },
+    picture: { medium },
+    phone,
+    login: { password },
+  } = data;
+
+  const handleChange = (e) => {
+    if (e.target.classList.contains("iconImg")) {
+      setPropert(e.target.alt);
+      const value = e.target.alt;
+      setUserValue(userValue[value]);
+    }
+  };
+
   return (
     <main>
-
       <div className="block bcg-orange">
         <img src={cwSvg} alt="cw" id="cw" />
       </div>
 
       <div className="block">
         <div className="container">
-          <img src={defaultImage} alt="random user" className="user-img" />
-          <p className="user-title">My ... is</p>
-          <p className="user-value"></p>
-          <div className="values-list">
+          <img src={medium} alt="random user" className="user-img" />
+          <p className="user-title">My {propert || "name"} is</p>
+          <p className="user-value">{userValue || userValue.name}</p>
+          <div className="values-list" onMouseOver={handleChange}>
             <button className="icon" data-label="name">
               <img src={womanSvg} alt="user" id="iconImg" />
             </button>
@@ -46,7 +89,7 @@ function App() {
               <img src={padlockSvg} alt="lock" id="iconImg" />
             </button>
           </div>
-          
+
           <div className="btn-group">
             <button className="btn" type="button">
               new user
