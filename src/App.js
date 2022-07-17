@@ -2,7 +2,7 @@ import React from "react";
 import mailSvg from "./assets/mail.svg";
 import manSvg from "./assets/man.svg";
 import womanSvg from "./assets/woman.svg";
-import manAgeSvg from "./assets/growing-up-man.svg";
+// import manAgeSvg from "./assets/growing-up-man.svg";
 import womanAgeSvg from "./assets/growing-up-woman.svg";
 import mapSvg from "./assets/map.svg";
 import phoneSvg from "./assets/phone.svg";
@@ -29,6 +29,7 @@ function App() {
   const [values, setValues] = useState("");
   const [loading, setLoading] = useState(false);
   const [gender, setGender] = useState("");
+  const [userList, setUserList] = useState([]);
 
   const getUser = async () => {
     try {
@@ -63,6 +64,7 @@ function App() {
 
         setGender(res.data.results[0].gender);
       });
+
       setLoading(true);
     } catch (error) {
       console.log(error);
@@ -71,8 +73,8 @@ function App() {
 
   useEffect(() => {
     getUser();
-    setTitle("name");
-    setValues(userInfo.name);
+    // setTitle("name");
+    // setValues(userInfo.name);
   }, []);
 
   const handleChange = (e) => {
@@ -103,6 +105,10 @@ function App() {
     setValues(userInfo.name);
   };
 
+  const handleAddUser = () => {
+    setUserList([userInfo]);
+  };
+
   if (!loading) {
     return <h1>Loading</h1>;
   }
@@ -116,8 +122,8 @@ function App() {
       <div className="block">
         <div className="container">
           <img src={userInfo.picture} alt="random user" className="user-img" />
-          <p className="user-title">My {title} is </p>
-          <p className="user-value">{values}</p>
+          <p className="user-title">My {title || "name"} is </p>
+          <p className="user-value">{values || userInfo.name}</p>
           <div className="values-list">
             <button className="icon" data-label="name">
               <img
@@ -179,7 +185,7 @@ function App() {
               {loading ? "new user" : "loading"}
             </button>
 
-            <button className="btn" type="button">
+            <button className="btn" type="button" onClick={handleAddUser}>
               add user
             </button>
           </div>
@@ -194,7 +200,16 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <tr className="body-tr"></tr>
+              {userList?.map((user, index) => {
+                return (
+                  <tr className="body-tr" key={index}>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.phone}</td>
+                    <td>{user.age}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
