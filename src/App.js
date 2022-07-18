@@ -73,8 +73,6 @@ function App() {
 
   useEffect(() => {
     getUser();
-    // setTitle("name");
-    // setValues(userInfo.name);
   }, []);
 
   const handleChange = (e) => {
@@ -106,7 +104,20 @@ function App() {
   };
 
   const handleAddUser = () => {
-    setUserList([userInfo]);
+    const check = userList.filter((item) => item.email === userInfo.email);
+    if (check.length) {
+      alert("The person already exists!");
+    } else {
+      setUserList([
+        ...userList,
+        {
+          firstName: userInfo.name,
+          email: userInfo.email,
+          phone: userInfo.phone,
+          age: userInfo.age,
+        },
+      ]);
+    }
   };
 
   if (!loading) {
@@ -203,7 +214,7 @@ function App() {
               {userList?.map((user, index) => {
                 return (
                   <tr className="body-tr" key={index}>
-                    <td>{user.name}</td>
+                    <td>{user.firstName}</td>
                     <td>{user.email}</td>
                     <td>{user.phone}</td>
                     <td>{user.age}</td>
